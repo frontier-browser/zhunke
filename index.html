@@ -4,18 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0f2027">
-  <title>FRONTIER BROWSER - CORE V3</title>
+  <title>FRONTIER BROWSER</title>
   
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
   <style>
     :root {
       --glass: rgba(255, 255, 255, 0.12);
       --glass2: rgba(255, 255, 255, 0.18);
       --border: rgba(255, 255, 255, 0.15);
       --shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-      --accent: #2cb67d;
     }
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,125 +34,123 @@
     /* SIDEBAR */
     .sidebar { width: 95px; height: 100vh; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 20px; z-index: 10; overflow-y: auto; }
     .sidebar::-webkit-scrollbar { display: none; }
-    .logo { width: 62px; min-height: 62px; border-radius: 22px; background: linear-gradient(135deg, #7f5af0, #2cb67d); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; margin-bottom: 8px; box-shadow: 0 0 25px rgba(255, 255, 255, 0.2); flex-shrink: 0; cursor: pointer; }
+    .logo { width: 62px; min-height: 62px; border-radius: 22px; background: linear-gradient(135deg, #7f5af0, #2cb67d); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; margin-bottom: 8px; box-shadow: 0 0 25px rgba(255, 255, 255, 0.2); flex-shrink: 0; }
     .side-btn { width: 58px; min-height: 58px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; background: var(--glass); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid transparent; flex-shrink: 0; }
     .side-btn:hover, .side-btn:focus { transform: translateY(-5px) scale(1.05); background: var(--glass2); outline: none; }
     
     /* MAIN AREA */
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     
-    /* TOPBAR / OMNIBOX */
-    .topbar { height: 85px; display: flex; align-items: center; gap: 20px; padding: 0 28px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); flex-shrink: 0;}
-    .brand-group { display: flex; flex-direction: column; min-width: 140px; }
-    .title { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
-    .subtitle { font-size: 11px; opacity: 0.7; }
+    /* TOPBAR & PROXY TOGGLE */
+    .topbar { height: 85px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); flex-shrink: 0;}
+    .title { font-size: 30px; font-weight: 700; }
+    .subtitle { font-size: 13px; opacity: 0.7; }
     
-    /* BROWSER CONTROLS */
-    .browser-controls { display: flex; align-items: center; gap: 8px; }
-    .nav-nav-btn { background: var(--glass); border: 1px solid var(--border); color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; transition: 0.2s; }
-    .nav-nav-btn:hover { background: var(--glass2); transform: scale(1.05); }
+    .top-right { display: flex; align-items: center; gap: 20px; }
     
-    .omnibox-wrap { flex: 1; max-width: 800px; display: flex; align-items: center; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border); padding: 8px 16px; border-radius: 30px; gap: 10px; }
-    .omnibox-wrap input { flex: 1; background: transparent; border: none; outline: none; color: white; font-family: 'Poppins', sans-serif; font-size: 14px; }
+    .proxy-container { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 8px 14px; border-radius: 20px; border: 1px solid var(--border); }
+    .proxy-label { font-size: 13px; font-weight: 600; opacity: 0.9; }
     
-    .top-right { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
-    #installBtn { display: none; background: #2cb67d; color: white; border: none; padding: 10px 18px; border-radius: 12px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 0 15px rgba(44, 182, 125, 0.4); }
+    /* Toggle Switch */
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: #2cb67d; }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    /* INSTALL BUTTON (PWA) */
+    #installBtn { display: none; background: #2cb67d; color: white; border: none; padding: 10px 20px; border-radius: 12px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 0 15px rgba(44, 182, 125, 0.4); }
     #installBtn:hover { background: #249666; transform: scale(1.05); }
 
     .clock-wrap { text-align: right; }
-    #clock { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
-    #date { opacity: 0.75; font-size: 12px; }
+    #clock { font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    #date { opacity: 0.75; font-size: 14px; }
 
     /* TAB BAR */
-    .tab-bar { display: flex; background: rgba(0, 0, 0, 0.3); border-bottom: 1px solid var(--border); overflow-x: auto; backdrop-filter: blur(10px); }
+    .tab-bar { display: flex; background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid var(--border); overflow-x: auto; backdrop-filter: blur(10px); }
     .tab-bar::-webkit-scrollbar { height: 4px; }
-    .tab { padding: 12px 24px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-right: 1px solid var(--border); opacity: 0.6; transition: all 0.2s; min-width: 165px; max-width: 250px; font-size: 13px; white-space: nowrap; }
+    .tab { padding: 12px 24px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-right: 1px solid var(--border); opacity: 0.6; transition: all 0.2s; min-width: 150px; max-width: 250px; font-size: 14px; white-space: nowrap; }
     .tab:hover { opacity: 0.9; background: rgba(255, 255, 255, 0.05); }
-    .tab.active { opacity: 1; background: rgba(255, 255, 255, 0.12); border-bottom: 3px solid var(--accent); font-weight: 500; }
+    .tab.active { opacity: 1; background: rgba(255, 255, 255, 0.1); border-bottom: 3px solid #2cb67d; }
     .tab-title { flex: 1; overflow: hidden; text-overflow: ellipsis; }
-    .tab-close { background: transparent; border: none; color: white; font-size: 16px; cursor: pointer; opacity: 0.5; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .tab-close { background: transparent; border: none; color: white; font-size: 18px; cursor: pointer; opacity: 0.5; border-radius: 50%; width: 24px; height: 24px; transition: 0.2s; }
     .tab-close:hover { opacity: 1; background: rgba(255, 77, 109, 0.8); }
 
     /* VIEWS CONTAINER */
-    .views-container { flex: 1; display: flex; position: relative; overflow: hidden; background: rgba(0,0,0,0.05); }
+    .views-container { flex: 1; display: flex; position: relative; overflow: hidden; }
     .view { display: none; width: 100%; height: 100%; border: none; background: white; }
     .view.active { display: block; }
-    #view-home { background: transparent; overflow-y: auto; padding: 40px 30px; }
+    #view-home { background: transparent; overflow-y: auto; padding: 30px; }
     
     /* DASHBOARD CONTENT */
-    .search-section { width: 100%; max-width: 850px; margin: 0 auto 40px auto; text-align: center; }
-    .welcome-text { font-size: 42px; font-weight: 700; margin-bottom: 25px; background: linear-gradient(to right, #fff, #b3cdd1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .search-box { display: flex; gap: 12px; background: rgba(255, 255, 255, 0.08); padding: 12px; border-radius: 30px; backdrop-filter: blur(20px); border: 1px solid var(--border); box-shadow: var(--shadow); }
-    .search-box input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 16px; padding-left: 12px; }
-    .search-box select, .search-box button { border: none; outline: none; border-radius: 20px; padding: 10px 20px; font-family: 'Poppins', sans-serif; font-size: 14px; cursor: pointer; }
+    .search-section { width: 100%; max-width: 950px; margin: 0 auto; }
+    .search-box { display: flex; gap: 12px; background: rgba(255, 255, 255, 0.08); padding: 14px; border-radius: 30px; backdrop-filter: blur(20px); border: 1px solid var(--border); box-shadow: var(--shadow); }
+    .search-box input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 17px; padding-left: 8px; }
+    .search-box select, .search-box button { border: none; outline: none; border-radius: 16px; padding: 12px 18px; font-family: 'Poppins', sans-serif; font-size: 15px; cursor: pointer; }
     .search-box select { background: rgba(255, 255, 255, 0.12); color: white; }
     .search-box option { color: black; }
     .search-box button { background: linear-gradient(135deg, #7f5af0, #2cb67d); color: white; font-weight: 600; transition: transform 0.2s; }
     .search-box button:hover { transform: scale(1.03); filter: brightness(1.1); }
     
-    /* STATUS & CONFIGURATION CRADLES */
-    .status-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .card { border-radius: 24px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); backdrop-filter: blur(20px); padding: 24px; display: flex; flex-direction: column; justify-content: space-between; }
-    .card-title { opacity: 0.6; font-size: 13px; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px; }
-    .card-big { font-size: 30px; font-weight: 700; }
+    /* STATUS & APPS */
+    .status-grid { margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .card { border-radius: 28px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); backdrop-filter: blur(20px); padding: 24px; }
+    .card-title { opacity: 0.7; font-size: 14px; margin-bottom: 12px; font-weight: 500; }
+    .card-big { font-size: 34px; font-weight: 700; }
     
-    .proxy-selector { width: 100%; margin-top: 12px; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 12px; font-family: 'Poppins', sans-serif; outline: none; cursor: pointer; }
-    .proxy-selector option { color: black; }
-
-    .apps-container { max-width: 1200px; margin: 0 auto; }
-    .apps-title { margin-top: 40px; margin-bottom: 20px; font-size: 24px; font-weight: 600; }
-    .apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
-    .app { height: 130px; border-radius: 24px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.3s; }
-    .app:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.14); border-color: rgba(255,255,255,0.3); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
-    .app-icon { font-size: 36px; }
-    .app-name { font-size: 13px; opacity: 0.9; font-weight: 500; text-align: center; padding: 0 8px;}
+    .apps-title { margin-top: 38px; margin-bottom: 22px; font-size: 28px; font-weight: 600; }
+    .apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 22px; }
+    .app { height: 130px; border-radius: 28px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: all 0.3s; }
+    .app:hover { transform: translateY(-6px) scale(1.04); background: rgba(255, 255, 255, 0.16); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .app-icon { font-size: 38px; }
+    .app-name { font-size: 14px; opacity: 0.85; font-weight: 500; text-align: center; padding: 0 10px;}
     
     /* HISTORY */
-    .history { max-width: 1200px; margin: 40px auto 0 auto; background: rgba(255, 255, 255, 0.06); border-radius: 24px; border: 1px solid var(--border); padding: 24px; }
-    .history-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .history-top h2 { font-size: 20px; font-weight: 600; }
-    .clear-btn { border: none; background: #ff4d6d; color: white; padding: 8px 16px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; font-size: 13px; }
+    .history { margin-top: 38px; background: rgba(255, 255, 255, 0.08); border-radius: 28px; border: 1px solid var(--border); padding: 24px; }
+    .history-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .clear-btn { border: none; background: #ff4d6d; color: white; padding: 10px 16px; border-radius: 14px; cursor: pointer; font-weight: 600; transition: 0.2s; }
     .clear-btn:hover { background: #ff3355; }
-    #historyList { display: flex; flex-wrap: wrap; gap: 10px; }
-    .history-item { padding: 8px 14px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); cursor: pointer; font-size: 13px; transition: 0.2s; }
-    .history-item:hover { background: rgba(255, 255, 255, 0.2); }
+    #historyList { display: flex; flex-wrap: wrap; gap: 12px; }
+    .history-item { padding: 10px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.12); cursor: pointer; font-size: 14px; }
+    .history-item:hover { background: rgba(255, 255, 255, 0.22); }
     
+    /* SCROLLBAR */
     ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.35); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
   </style>
 </head>
 <body>
 
+  <!-- SIDEBAR -->
   <nav class="sidebar">
-    <div class="logo" onclick="switchTab('home')" title="Go Home">F</div>
-    <div class="side-btn" onclick="openSite('https://an1.com', 'AN1 Mods')" title="AN1 Mods">🎮</div>
-    <div class="side-btn" onclick="openSite('https://vidbox.cc', 'VidBox')" title="VidBox">🎬</div>
-    <div class="side-btn" onclick="openSite('https://amp.xhamster.com', 'Web Matrix')" title="Web Matrix">🕸️</div>
-    <div class="side-btn" onclick="openSite('https://www.youtube.com/embed/dQw4w9WgXcQ', 'YouTube')" title="YouTube">▶</div>
+    <div class="logo">F</div>
+    <div class="side-btn" onclick="openSite('https://an1.com', 'AN1 Mods', false)" title="AN1 Mods">🎮</div>
+    <div class="side-btn" onclick="openSite('https://vidbox.cc', 'VidBox', false)" title="VidBox">🎬</div>
+    <div class="side-btn" onclick="openSite('https://earth.nullschool.net', 'Web Matrix', false)" title="Web Matrix">🕸️</div>
+    <div class="side-btn" onclick="openSite('https://www.youtube.com/embed', 'YouTube', false)" title="YouTube">▶</div>
   </nav>
 
   <div class="main">
     
+    <!-- TOPBAR -->
     <header class="topbar">
-      <div class="brand-group">
+      <div>
         <div class="title">FRONTIER BROWSER</div>
-        <div class="subtitle">FUTURISTIC WEB BROWSING</div>
+        <div class="subtitle">Universal Access Desktop</div>
       </div>
-      
-      <div class="browser-controls">
-        <button class="nav-nav-btn" onclick="goBack()" title="Back">◀</button>
-        <button class="nav-nav-btn" onclick="goForward()" title="Forward">▶</button>
-        <button class="nav-nav-btn" onclick="refreshTab()" title="Reload">🔄</button>
-        <button class="nav-nav-btn" onclick="switchTab('home')" title="Home Desktop">🏠</button>
-      </div>
-
-      <div class="omnibox-wrap">
-        <span id="lock-icon" style="opacity: 0.5; font-size:14px;">🔒</span>
-        <input type="text" id="omnibox" placeholder="Enter URL or search parameters..." onkeydown="if(event.key === 'Enter') handleOmniboxInput();">
-      </div>
-
       <div class="top-right">
+        
+        <!-- PROXY TOGGLE -->
+        <div class="proxy-container" title="Bypass strict website blocks">
+          <span class="proxy-label">Proxy Mode (Unblocker)</span>
+          <label class="switch">
+            <input type="checkbox" id="proxyToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
         <button id="installBtn">↓ Install App</button>
         <div class="clock-wrap">
           <div id="clock">--:--:--</div>
@@ -163,100 +159,54 @@
       </div>
     </header>
 
+    <!-- TABS -->
     <div class="tab-bar" id="tabBar"></div>
 
+    <!-- VIEWS CONTAINER -->
     <div class="views-container" id="viewsContainer">
       <main class="view active" id="view-home">
         
         <div class="search-section">
-          <h1 class="welcome-text">Frontier Core Sandbox</h1>
           <form class="search-box" onsubmit="event.preventDefault(); searchWeb();">
-            <input type="text" id="searchInput" placeholder="Search parameters or direct URL mappings...">
+            <input type="text" id="searchInput" placeholder="Search the web or enter a blocked URL...">
             <select id="engine">
               <option value="google">Google</option>
               <option value="bing">Bing</option>
               <option value="duck">DuckDuckGo</option>
             </select>
-            <button type="submit">Search</button>
+            <button type="submit">Go</button>
           </form>
         </div>
 
         <section class="status-grid">
           <div class="card">
-            <div>
-              <div class="card-title">SYSTEM STATUS</div>
-              <div class="card-big" id="onlineStatus">ONLINE</div>
-            </div>
-            <div style="margin-top:12px; opacity:0.6; font-size: 12px;">Local sandbox instance secure</div>
+            <div class="card-title">SYSTEM STATUS</div>
+            <div class="card-big" id="onlineStatus">ONLINE</div>
+            <div style="margin-top:10px; opacity:0.7; font-size: 13px;">Network connection verified</div>
           </div>
-          
           <div class="card">
-            <div>
-              <div class="card-title">ROUTING CONFIGURATION</div>
-              <div class="card-big" id="proxyLabel" style="color: #2cb67d; font-size: 24px;">DIRECT SANDBOX</div>
-            </div>
-            <div>
-              <select id="proxyRuleSelector" class="proxy-selector" onchange="updateProxyConfiguration(this.value)">
-                <option value="direct">Direct Frame Sandbox (Fastest)</option>
-                <option value="allorigins">AllOrigins API (Bypass Headers)</option>
-                <option value="ultraviolet">Ultraviolet Gateway (Full Web Proxy)</option>
-              </select>
-            </div>
+            <div class="card-title">FRONTIER ENGINE</div>
+            <div class="card-big">V 3.0</div>
+            <div style="margin-top:10px; opacity:0.7; font-size: 13px;">Proxy Iframe Override Ready</div>
           </div>
         </section>
 
-        <section class="apps-container">
-          <div class="apps-title">Integrated Shortcuts</div>
+        <section>
+          <div class="apps-title">Applications & Shortcuts</div>
           <div class="apps">
-            
-            <div class="app" onclick="openSite('https://an1.com', 'AN1 Mods')">
-              <div class="app-icon" style="text-shadow: 0 0 15px #ff4d6d;">🎮</div>
-              <div class="app-name">AN1 Mods</div>
-            </div>
-            
-            <div class="app" onclick="openSite('https://vidbox.cc', 'VidBox')">
-              <div class="app-icon" style="text-shadow: 0 0 15px #fca311;">🎬</div>
-              <div class="app-name">VidBox</div>
-            </div>
-
-            <div class="app" onclick="openSite('https://www.photopea.com', 'Photopea')">
-              <div class="app-icon" style="text-shadow: 0 0 15px #4cc9f0;">🎨</div>
-              <div class="app-name">Photopea Editor</div>
-            </div>
-
-            <div class="app" onclick="openSite('https://crazygames.com', 'CrazyGames')">
-              <div class="app-icon" style="text-shadow: 0 0 15px #e36414;">🕹️</div>
-              <div class="app-name">CrazyGames</div>
-            </div>
-
-            <div class="app" onclick="openSite('https://soundcloud.com', 'SoundCloud')">
-              <div class="app-icon" style="text-shadow: 0 0 15px #ff7900;">🎧</div>
-              <div class="app-name">SoundCloud</div>
-            </div>
-
-            <div class="app" onclick="openSite('https://www.youtube.com/embed/dQw4w9WgXcQ', 'YouTube Embed')">
-              <div class="app-icon" style="text-shadow: 0 0 15px #ff0000;">▶</div>
-              <div class="app-name">YouTube Player</div>
-            </div>
-            
-            <div class="app" onclick="openSite('https://earth.nullschool.net', 'Web Matrix')">
-              <div class="app-icon" style="text-shadow: 0 0 15px #2cb67d;">🕸️</div>
-              <div class="app-name">Web Matrix</div>
-            </div>
-            
-            <div class="app" onclick="openSite('https://en.wikipedia.org/wiki/Main_Page', 'Data Repo')">
-              <div class="app-icon" style="text-shadow: 0 0 15px #7f5af0;">🛰️</div>
-              <div class="app-name">Data Repo</div>
-            </div>
-
+            <div class="app" onclick="openSite('https://an1.com', 'AN1 Mods', false)"><div class="app-icon" style="text-shadow: 0 0 15px #ff4d6d;">🎮</div><div class="app-name">AN1 Mods</div></div>
+            <div class="app" onclick="openSite('https://vidbox.cc', 'VidBox', false)"><div class="app-icon" style="text-shadow: 0 0 15px #fca311;">🎬</div><div class="app-name">VidBox</div></div>
+            <div class="app" onclick="openSite('https://www.photopea.com', 'Photopea', false)"><div class="app-icon" style="text-shadow: 0 0 15px #4cc9f0;">🎨</div><div class="app-name">Photopea Editor</div></div>
+            <div class="app" onclick="openSite('https://crazygames.com', 'CrazyGames', false)"><div class="app-icon" style="text-shadow: 0 0 15px #e36414;">🕹️</div><div class="app-name">CrazyGames</div></div>
+            <div class="app" onclick="openSite('https://1v1.lol', '1v1.LOL', false)"><div class="app-icon" style="text-shadow: 0 0 15px #9d4edd;">🔫</div><div class="app-name">1v1.LOL</div></div>
+            <div class="app" onclick="openSite('https://soundcloud.com', 'SoundCloud', false)"><div class="app-icon" style="text-shadow: 0 0 15px #ff7900;">🎧</div><div class="app-name">SoundCloud</div></div>
+            <div class="app" onclick="openSite('https://www.youtube.com/embed', 'YouTube', false)"><div class="app-icon" style="text-shadow: 0 0 15px #ff0000;">▶</div><div class="app-name">YouTube</div></div>
+            <div class="app" onclick="openSite('https://earth.nullschool.net', 'Web Matrix', false)"><div class="app-icon" style="text-shadow: 0 0 15px #2cb67d;">🕸️</div><div class="app-name">Web Matrix</div></div>
           </div>
         </section>
 
         <section class="history">
-          <div class="history-top">
-            <h2>Omnibox Registry Logs</h2>
-            <button class="clear-btn" onclick="clearHistory()">Flush Memory</button>
-          </div>
+          <div class="history-top"><h2>Recent Queries</h2><button class="clear-btn" onclick="clearHistory()">Clear All</button></div>
           <div id="historyList"></div>
         </section>
 
@@ -265,52 +215,7 @@
   </div>
 
   <script>
-    /* ==========================================================================
-       GLOBAL JAVASCRIPT CONFIGURATION RULES
-       ========================================================================== */
-    const PROXY_REGISTRY = {
-      direct: "",                                            // No proxy layer
-      allorigins: "https://api.allorigins.win/raw?url=",     // Public CORS unblocker tool
-      ultraviolet: "https://nullschool.net/proxy/service/"   // Placeholder for production web proxy deployment script
-    };
-
-    // Current operating config rule rule tracking parameter
-    let activeProxyRule = "direct"; 
-
-    function updateProxyConfiguration(ruleKey) {
-      activeProxyRule = ruleKey;
-      const label = document.getElementById('proxyLabel');
-      
-      if(ruleKey === 'direct') {
-        label.innerText = "DIRECT SANDBOX";
-        label.style.color = "#2cb67d";
-      } else if(ruleKey === 'allorigins') {
-        label.innerText = "HEADERS STRIPPED";
-        label.style.color = "#ffb703";
-      } else {
-        label.innerText = "PROXY ACCELERATED";
-        label.style.color = "#7f5af0";
-      }
-      
-      // Sync rule choice configuration directly across currently active viewport frame environments
-      if(activeTabId !== 'home') {
-        const activeTab = tabs.find(t => t.id === activeTabId);
-        if(activeTab) updateActiveIframe(activeTab.url, activeTab.title);
-      }
-    }
-
-    /* SEARCH ENGINES PROFILES */
-    const engines = {
-      google: "https://www.google.com/search?igu=1&q=", // igu=1 parameter signals frame access allowance rules parameters
-      bing: "https://www.bing.com/search?q=",
-      duck: "https://duckduckgo.com/?q="
-    };
-
-    /* PWA SERVICE RUNTIME BOILERPLATE */
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Setup Hook Terminated: ', err));
-    }
-
+    /* PWA INSTALL LOGIC */
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -322,14 +227,12 @@
       if (deferredPrompt) {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          document.getElementById('installBtn').style.display = 'none';
-        }
+        if (outcome === 'accepted') document.getElementById('installBtn').style.display = 'none';
         deferredPrompt = null;
       }
     });
 
-    /* CLOCK RUNTIME SYSTEM */
+    /* CLOCK & STATUS */
     function updateClock(){
       const now = new Date();
       document.getElementById("clock").innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
@@ -339,8 +242,8 @@
     window.addEventListener('online', () => document.getElementById('onlineStatus').innerText = 'ONLINE');
     window.addEventListener('offline', () => document.getElementById('onlineStatus').innerText = 'OFFLINE');
 
-    /* BROWSER TAB MEMORY AND STRUCTS */
-    let tabs = [{ id: 'home', title: 'Dashboard', url: 'Frontier://Dashboard' }];
+    /* TABS SYSTEM */
+    let tabs = [{ id: 'home', title: 'Dashboard', url: 'home' }];
     let activeTabId = 'home';
 
     function renderTabs() {
@@ -352,7 +255,7 @@
         tabEl.className = `tab ${tab.id === activeTabId ? 'active' : ''}`;
         tabEl.onclick = () => switchTab(tab.id);
         
-        const icon = tab.id === 'home' ? '🏠 ' : '🌐 ';
+        const icon = tab.id === 'home' ? '🏠 ' : '📄 ';
         const titleSpan = document.createElement('span');
         titleSpan.className = 'tab-title';
         titleSpan.innerText = icon + tab.title;
@@ -367,7 +270,6 @@
         }
         tabBar.appendChild(tabEl);
       });
-      updateOmniboxDisplay();
     }
 
     function switchTab(id) {
@@ -384,129 +286,76 @@
         tabs.splice(tabIndex, 1);
         const iframe = document.getElementById(`view-${id}`);
         if (iframe) iframe.remove();
-        if (activeTabId === id) { 
-          switchTab((tabs[tabIndex - 1] || tabs[0]).id); 
-        } else { 
-          renderTabs(); 
-        }
+        if (activeTabId === id) { switchTab((tabs[tabIndex - 1] || tabs[0]).id); } 
+        else { renderTabs(); }
       }
     }
 
-    /* IFRAME SPANNING AND LOAD ENGINE */
-    function openSite(url, title = 'Web Page') {
-      const isSearchQuery = !url.includes(".") || url.includes(" ");
-      let absoluteUrl = url;
-
-      if (!isSearchQuery && !url.startsWith("http://") && !url.startsWith("https://")) {
-        absoluteUrl = "https://" + url;
-      }
-
-      const prefix = PROXY_REGISTRY[activeProxyRule];
-      const integratedTargetUrl = (prefix && !absoluteUrl.startsWith("Frontier://")) ? prefix + encodeURIComponent(absoluteUrl) : absoluteUrl;
+    /* UNIVERSAL OPEN SITE (WITH PROXY SUPPORT) */
+    function openSite(url, title = 'Web Page', applyProxyLogic = true) {
       const newTabId = 'tab-' + Date.now();
       
-      if (title === 'Web Page' && absoluteUrl.includes('://')) {
-        try { title = new URL(absoluteUrl).hostname.replace('www.', ''); } catch (e) {}
+      // Determine if we should use the unblocker proxy
+      let finalUrl = url;
+      const proxyEnabled = document.getElementById('proxyToggle').checked;
+      
+      if (applyProxyLogic && proxyEnabled && url.startsWith('http')) {
+        // Wrap the requested URL inside a CORS/Iframe Proxy to bypass security headers
+        finalUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+        title = "🛡️ " + title; // Visual indicator that proxy is active
       }
 
-      tabs.push({ id: newTabId, title: title, url: absoluteUrl });
+      if (title === 'Web Page' && url.includes('://')) {
+        try { title = new URL(url).hostname.replace('www.', ''); } catch (e) {}
+      }
+      
+      tabs.push({ id: newTabId, title: title, url: finalUrl });
 
       const iframe = document.createElement('iframe');
       iframe.className = 'view';
       iframe.id = `view-${newTabId}`;
-      iframe.src = integratedTargetUrl;
-      iframe.sandbox = "allow-same-origin allow-scripts allow-popups allow-forms allow-modals";
+      iframe.src = finalUrl;
+      iframe.sandbox = "allow-same-origin allow-scripts allow-popups allow-forms";
       
       document.getElementById('viewsContainer').appendChild(iframe);
       switchTab(newTabId);
     }
 
-    function updateActiveIframe(url, updatedTitle = null) {
-      if(activeTabId === 'home') return;
-      let targetUrl = url;
-      if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        targetUrl = "https://" + url;
-      }
-      
-      const activeTab = tabs.find(t => t.id === activeTabId);
-      if(activeTab) {
-        activeTab.url = targetUrl;
-        if(updatedTitle) activeTab.title = updatedTitle;
-        else {
-          try { activeTab.title = new URL(targetUrl).hostname.replace('www.', ''); } catch (e) {}
-        }
-        
-        const iframe = document.getElementById(`view-${activeTabId}`);
-        if(iframe) {
-          const prefix = PROXY_REGISTRY[activeProxyRule];
-          iframe.src = prefix ? prefix + encodeURIComponent(targetUrl) : targetUrl;
-        }
-        renderTabs();
-      }
-    }
-
-    /* OMNIBOX PARSING PIPELINES */
-    function updateOmniboxDisplay() {
-      const activeTab = tabs.find(t => t.id === activeTabId);
-      if (activeTab) {
-        document.getElementById('omnibox').value = activeTab.url;
-        document.getElementById('lock-icon').innerText = activeTab.url.startsWith("https") ? "🔒" : "🔓";
-      }
-    }
-
-    function handleOmniboxInput() {
-      const input = document.getElementById('omnibox').value.trim();
-      if(input === "") return;
-      
-      saveHistory(input);
-      if (input.includes(".") && !input.includes(" ")) {
-        if(activeTabId === 'home') { openSite(input); } else { updateActiveIframe(input); }
-      } else {
-        const engine = document.getElementById("engine").value;
-        const searchUrl = engines[engine] + encodeURIComponent(input);
-        if(activeTabId === 'home') { openSite(searchUrl, `Search: ${input}`); } else { updateActiveIframe(searchUrl, `Search: ${input}`); }
-      }
-    }
+    /* SEARCH LOGIC */
+    const engines = {
+      google: "https://www.google.com/search?q=",
+      bing: "https://www.bing.com/search?q=",
+      duck: "https://duckduckgo.com/?q="
+    };
 
     function searchWeb() {
       const input = document.getElementById("searchInput");
       const query = input.value.trim();
+      const proxyEnabled = document.getElementById('proxyToggle').checked;
       if(query === "") return;
 
       saveHistory(query);
+      let url = "";
+
       if (query.includes(".") && !query.includes(" ")) {
-        openSite(query);
+        url = query.startsWith("http") ? query : "https://" + query;
+        openSite(url, url, true);
       } else {
         const engine = document.getElementById("engine").value;
-        const targetUrl = engines[engine] + encodeURIComponent(query);
-        openSite(targetUrl, `Search: ${query}`);
+        url = engines[engine] + encodeURIComponent(query);
+        
+        if (proxyEnabled) {
+          // If proxy is ON, open search inside a tab
+          openSite(url, "Search: " + query, true);
+        } else {
+          // If proxy is OFF, search engines block iframes natively, so pop out
+          window.open(url, "_blank", "noopener,noreferrer");
+        }
       }
       input.value = "";
     }
 
-    /* CHROME CONTROLS INTERFACES */
-    function goBack() {
-      const activeIframe = document.getElementById(`view-${activeTabId}`);
-      if (activeIframe && activeTabId !== 'home') {
-        try { activeIframe.contentWindow.history.back(); } catch(e) { console.warn("Cross-Origin security policies blocked local access history parsing array."); }
-      }
-    }
-
-    function goForward() {
-      const activeIframe = document.getElementById(`view-${activeTabId}`);
-      if (activeIframe && activeTabId !== 'home') {
-        try { activeIframe.contentWindow.history.forward(); } catch(e) { console.warn("Cross-Origin security policies blocked local access history parsing array."); }
-      }
-    }
-
-    function refreshTab() {
-      const activeIframe = document.getElementById(`view-${activeTabId}`);
-      if (activeIframe && activeTabId !== 'home') {
-        activeIframe.src = activeIframe.src;
-      }
-    }
-
-    /* HISTORICAL SEARCH PERSISTENCE ENGINE */
+    /* HISTORY */
     function saveHistory(query) {
       let history = JSON.parse(localStorage.getItem("frontierHistory")) || [];
       history = [query, ...history.filter(item => item !== query)].slice(0, 15);
@@ -518,16 +367,13 @@
       const list = document.getElementById("historyList");
       const history = JSON.parse(localStorage.getItem("frontierHistory")) || [];
       list.innerHTML = "";
-      if(history.length === 0){ list.innerHTML = "<div style='opacity:0.5; font-size: 13px;'>No operational registry parameters stored.</div>"; return; }
+      if(history.length === 0){ list.innerHTML = "<div style='opacity:0.6; font-size: 14px;'>No search history</div>"; return; }
 
       history.forEach(item => {
         const div = document.createElement("div");
         div.className = "history-item";
         div.innerText = item;
-        div.onclick = () => { 
-          document.getElementById("omnibox").value = item;
-          handleOmniboxInput();
-        };
+        div.onclick = () => { document.getElementById("searchInput").value = item; };
         list.appendChild(div);
       });
     }
