@@ -97,7 +97,6 @@
 </head>
 <body>
 
-  <!-- SIDEBAR SHORTCUTS -->
   <nav class="sidebar">
     <div class="logo">F</div>
     <div class="side-btn" onclick="launchApp('https://google.com')" title="Google">🔍</div>
@@ -109,7 +108,6 @@
 
   <div class="main">
     
-    <!-- TOPBAR -->
     <header class="topbar">
       <div>
         <div class="title">FRONTIER DESKTOP</div>
@@ -124,10 +122,8 @@
       </div>
     </header>
 
-    <!-- MAIN DESKTOP CANVAS -->
     <main id="view-home">
       
-      <!-- SEARCH / URL BAR -->
       <div class="search-section">
         <form class="search-box" onsubmit="event.preventDefault(); handleSearchOrUrl();">
           <input type="text" id="searchInput" placeholder="Enter any URL (e.g., google.com) or search something...">
@@ -140,7 +136,6 @@
         </form>
       </div>
 
-      <!-- SYSTEM STATUS CARDS -->
       <section class="status-grid">
         <div class="card">
           <div class="card-title">ENVIRONMENT STATUS</div>
@@ -154,7 +149,6 @@
         </div>
       </section>
 
-      <!-- APPLICATION APP GRID -->
       <section>
         <div class="apps-title">Web App Launcher</div>
         <div class="apps">
@@ -169,7 +163,6 @@
         </div>
       </section>
 
-      <!-- RECENT RUNS -->
       <section class="history">
         <div class="history-top"><h2>Recent Launches</h2><button class="clear-btn" onclick="clearHistory()">Clear History</button></div>
         <div id="historyList"></div>
@@ -208,15 +201,12 @@
 
     /* UNIVERSAL APP LAUNCHER (BYPASSES IFRAME BLOCKS) */
     function launchApp(url) {
-      // Calculate layout dimensions to center the app window nicely on screen
       const w = 1200;
       const h = 750;
       const left = (screen.width / 2) - (w / 2);
       const top = (screen.height / 2) - (h / 2);
 
-      // 'popup=yes' or specific window features strip out the native browser navigation/tabs bar
       const windowFeatures = `popup=yes,width=${w},height=${h},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no`;
-      
       window.open(url, '_blank', windowFeatures);
     }
 
@@ -235,7 +225,6 @@
       saveHistory(query);
       let targetUrl = "";
 
-      // Check if user input is an exact URL domain or standard text search
       if (query.includes(".") && !query.includes(" ")) {
         targetUrl = query.startsWith("http") ? query : "https://" + query;
       } else {
@@ -281,13 +270,15 @@
     window.addEventListener("DOMContentLoaded", () => {
       renderHistory();
     });
+
+    /* SERVICE WORKER REGISTRATION */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/zhunke/sw.js')
+          .then(reg => console.log('Service Worker registered successfully!', reg.scope))
+          .catch(err => console.error('Service Worker registration failed:', err));
+      });
+    }
   </script>
-  if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('Service Worker registered successfully!', reg))
-      .catch(err => console.error('Service Worker registration failed:', err));
-  });
-}
 </body>
 </html>
