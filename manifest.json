@@ -1,15 +1,29 @@
 {
-  "name": "Frontier Browser",
   "short_name": "Frontier",
-  "start_url": ".",
+  "name": "Frontier OS",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f2027",
-  "theme_color": "#0f2027",
-  "description": "Futuristic Web Desktop Container and Core Engine.",
-  "icons": [
+  
+  "// 1. Unique ID (Action Item 4)": "Helps OS/browsers track the app if the URL changes",
+  "id": "/zhunke/",
+
+  "// 2. Orientation (Action Item 3)": "Since it's a web desktop container, 'any' or 'landscape' fits best",
+  "orientation": "any",
+
+  "// 3. Categories (Action Item 5)": "Improves discovery in app stores",
+  "categories": ["productivity", "utilities"],
+
+  "// 4. Screenshots (Action Item 2)": "Required for the installation prompt UI",
+  "screenshots": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/8445/8445980.png",
-      "sizes": "512x512",
+      "src": "assets/screenshot-desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "assets/screenshot-mobile.png",
+      "sizes": "750x1334",
       "type": "image/png"
     }
   ]
