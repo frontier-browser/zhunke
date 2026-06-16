@@ -1,14 +1,33 @@
-const CACHE_NAME = 'frontier-v3-cache';
-const ASSETS = [
-  '.',
-  'index.html',
-  'manifest.json'
+const CACHE_NAME = 'frontier-v1';
+const ASSETS_TO_CACHE = [
+  './',
+  './index.html',
+  './manifest.json',
+  // Add paths to your main CSS, JS, and icons here so they load offline:
+  // './css/style.css',
+  // './js/app.js'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
+// Install Event - Caching basic assets
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
+  );
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
+// Activate Event
+self.addEventListener('activate', event => {
+  event.waitUntil(self.clients.claim());
+});
+
+// Fetch Event - Serving cached files when offline
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(cachedResponse => {
+      return cachedResponse || fetch(event.request);
+    })
+  );
 });
